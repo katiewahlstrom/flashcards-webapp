@@ -1,0 +1,14 @@
+.sidebar {
+  background-color: #8dd0d0;
+  height: 600px;
+}
+
+.content {
+  background-color: #dafcfc;
+  height: 600px;
+}
+
+.card-container {
+  background-color: #a0eae9;
+  padding: 10px;
+}

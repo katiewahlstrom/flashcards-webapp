@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Stack 1",
+    "cards": [
+      { "id": 0, "side_a": "Something here", "side_b": "Another thing" },
+      {
+        "id": 1,
+        "side_a": "Something else here",
+        "side_b": "Yet another thing"
+      }
+    ]
+  },
+  {
+    "title": "Stack 2",
+    "cards": [
+      { "id": 0, "side_a": "Card text", "side_b": "Card another thing" }
+    ]
+  },
+  {
+    "title": "English Flashcards",
+    "cards": [
+      { "id": 0, "side_a": "Example", "side_b": "Answer" },
+      { "id": 1, "side_a": "Card text", "side_b": "Card text" }
+    ]
+  }
+]
