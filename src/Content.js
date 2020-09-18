@@ -10,39 +10,13 @@ class Content extends Component {
   cardsList = () => {
     return this.props.stack !== Object ? (
       this.props.stack.cards.map((card, i) => {
-        const sideAInputChanged = (e) => {
-          this.props.updateCard(
-            this.props.stack._id,
-            card.id,
-            "side_a",
-            e.target.value
-          );
-        };
-
-        const sideBInputChanged = (e) => {
-          this.props.updateCard(
-            this.props.stack._id,
-            card.id,
-            "side_b",
-            e.target.value
-          );
-        };
-
         return (
           <div key={card.id} className="row card-container">
             <div className="col-5">
               <div className="card bg-light mb-3">
                 <div className="card-header">Side A</div>
                 <div className="card-body">
-                  {this.state.edit_card === card.id ? (
-                    <input
-                      className={`form-control`}
-                      onChange={sideAInputChanged}
-                      value={this.props.stack.cards[i].side_a}
-                    />
-                  ) : (
-                    <p>{this.props.stack.cards[i].side_a}</p>
-                  )}
+                  <p>{this.props.stack.cards[i].side_a}</p>
                 </div>
               </div>
             </div>
@@ -51,38 +25,27 @@ class Content extends Component {
               <div className="card bg-light mb-3">
                 <div className="card-header">Side B</div>
                 <div className="card-body">
-                  {this.state.edit_card === card.id ? (
-                    <input
-                      className={`form-control`}
-                      onChange={sideBInputChanged}
-                      value={this.props.stack.cards[i].side_b}
-                    />
-                  ) : (
-                    <p>{this.props.stack.cards[i].side_b}</p>
-                  )}
+                  <p>{this.props.stack.cards[i].side_b}</p>
                 </div>
               </div>
             </div>
 
             <div className="col-2">
               <div className="mx-auto">
-                {this.state.edit_card !== card.id ? (
-                  <button
-                    onClick={() => this.setState({ edit_card: card.id })}
-                    type="button"
-                    className="btn btn-info btn-block"
-                  >
-                    Edit
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => this.setState({ edit_card: null })}
-                    type="button"
-                    className="btn btn-warning btn-block"
-                  >
-                    Save
-                  </button>
-                )}
+                <button
+                  onClick={() =>
+                    this.setState({
+                      edit_card: card.id,
+                      side_a: card.side_a,
+                      side_b: card.side_b,
+                    })
+                  }
+                  type="button"
+                  className="btn btn-info btn-block"
+                >
+                  Edit
+                </button>
+
                 <p></p>
                 <button
                   onClick={() => {
@@ -104,30 +67,42 @@ class Content extends Component {
   };
 
   sideAUpdate = (e) => {
+    // debugger;
     this.setState({
       side_a: e.target.value,
     });
   };
 
   sideBUpdate = (e) => {
+    // debugger;
     this.setState({
       side_b: e.target.value,
     });
   };
 
-  submitNewCard = () => {
-    console.log("submitting new card");
-    this.props.stack.cards.push({
-      id: Math.random(),
-      side_a: this.state.side_a,
-      side_b: this.state.side_b,
-    });
+  handleCardChange = () => {
+    if (this.state.edit_card) {
+      const card = {
+        id: this.state.edit_card,
+        side_a: this.state.side_a,
+        side_b: this.state.side_b,
+      };
+      this.props.editCard(card, this.props.stack._id);
+    } else {
+      const card = {
+        id: Math.random(),
+        side_a: this.state.side_a,
+        side_b: this.state.side_b,
+      };
+
+      this.props.addCard(card, this.props.stack._id);
+    }
 
     this.setState({
       side_a: "",
       side_b: "",
+      edit_card: null,
     });
-    this.props.addCard(this.props.stack);
   };
 
   render() {
@@ -137,7 +112,7 @@ class Content extends Component {
           <div className="container">
             <h1>{this.props.stack.title}</h1>
             <hr />
-            <h3>Add a flashcard</h3>
+            <h3>{this.state.edit_card ? "Edit" : "Add"} a flashcard</h3>
             <div className="App">
               <div className="row card-container">
                 <div className="col-5">
@@ -175,7 +150,7 @@ class Content extends Component {
                     <p></p>
                     <button
                       type="button"
-                      onClick={() => this.submitNewCard()}
+                      onClick={() => this.handleCardChange()}
                       className="btn btn-primary btn-block"
                     >
                       Save

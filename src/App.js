@@ -2,7 +2,12 @@ import React, { Component } from "react";
 import Sidebar from "./Sidebar";
 import Content from "./Content";
 import "./App.css";
-import { getStacks } from "./stacksService";
+import {
+  getStacks,
+  createStack,
+  deleteStack,
+  updateStack,
+} from "./stacksService";
 
 // App component is being rendered in the id=root html element
 class App extends Component {
@@ -31,64 +36,102 @@ class App extends Component {
     });
   };
 
-  updateCard = (stack_id, card_id, side, content) => {
+  updateCard = (stack_id, card_id, side_a, side_b) => {
     console.log("updating card", stack_id, card_id);
 
-    let stack = this.state.stacks.find((s) => s._id === stack_id);
+    const stack = this.state.stacks.find((s) => s._id === stack_id);
 
-    stack.cards.find((c) => c.id === card_id)[side] = content;
+    const card = stack.cards.find((c) => c.id === card_id);
+    card.side_b = side_b;
+    card.side_a = side_a;
 
-    this.setState({
-      stacks: this.state.stacks,
-    });
+    // this.setState({
+    //   stacks: this.state.stacks,
+    // });
+    debugger;
+    updateStack(stack_id, stack)
+      .then(() => {
+        this.fetchStacks();
+      })
+      .catch((error) => {
+        debugger;
+      });
   };
 
-  addCard = (stack) => {
+  addCard = (card, stackId) => {
     // card = { id: 0, side_a: 'Example', side_b: 'Answer' }
 
-    const otherStacks = this.state.stacks.filter((s) => s._id !== stack._id);
+    const stack = this.state.stacks.find((s) => s._id === stackId);
 
-    this.setState({
-      stacks: [stack, ...otherStacks],
-    });
+    stack.cards.push(card);
+
+    updateStack(stackId, stack)
+      .then(() => {
+        this.fetchStacks();
+      })
+      .catch((error) => {
+        debugger;
+      });
+  };
+
+  editCard = (newCard, stackId) => {
+    const stack = this.state.stacks.find((s) => s._id === stackId);
+
+    const card = stack.cards.find((c) => c.id === newCard.id);
+    card.side_a = newCard.side_a;
+    card.side_b = newCard.side_b;
+
+    updateStack(stackId, stack)
+      .then(() => {
+        this.fetchStacks();
+      })
+      .catch((error) => {
+        debugger;
+      });
   };
 
   componentDidMount = () => {
     this.fetchStacks();
   };
 
-  deleteCard = (stack_id, card_id) => {
-    // find the stack to update
-    const stack = this.state.stacks.find((s) => s._id === stack_id);
-
-    // filter the stack cards that do not match the card id
-    stack.cards = stack.cards.filter((c) => c.id !== card_id);
-
-    // remove the stack from the rest to later add it again with a new list of cards
-    const otherStacks = this.state.stacks.filter((s) => s._id !== stack_id);
-
-    // add the new list of stacks plus the modified stack
-    this.setState({
-      stacks: [...otherStacks, stack],
-    });
+  deleteCard = (stackId, cardId) => {
+    const stack = this.state.stacks.find((s) => s._id === stackId);
+    const otherCards = stack.cards.filter((c) => c.id !== cardId);
+    stack.cards = otherCards;
+    updateStack(stackId, stack)
+      .then(() => {
+        this.fetchStacks();
+      })
+      .catch((error) => {
+        debugger;
+      });
   };
 
   addStack = (title) => {
     const newStack = {
-      id: Math.random(),
       title: title,
       cards: [],
     };
 
-    // push new stack to array
-    this.setState({
-      stacks: [...this.state.stacks, newStack],
-    });
+    createStack(newStack)
+      .then(() => {
+        this.fetchStacks();
+      })
+      .catch((error) => {
+        debugger;
+      });
   };
 
   handleDeleteStack = (stackId) => {
-    debugger;
+    deleteStack(stackId)
+      .then(() => {
+        this.fetchStacks();
+      })
+      .catch((error) => {
+        debugger;
+      });
   };
+
   render() {
     return (
       <div className="container-fluid">
@@ -105,6 +148,7 @@ class App extends Component {
           <Content
             stack={this.state.selectedStack}
             addCard={this.addCard}
+            editCard={this.editCard}
             updateCard={this.updateCard}
             deleteCard={this.deleteCard}
           />
