@@ -12,16 +12,19 @@ import {
 // App component is being rendered in the id=root html element
 class App extends Component {
   state = {
-    selectedStack: Object,
+    selectedStack: null,
     stacks: [],
   };
 
   fetchStacks = () => {
     getStacks()
       .then((response) => {
+        debugger;
         this.setState({
           stacks: response.data,
-          selectedStack: response.data[0],
+          selectedStack: this.state.selectedStack
+            ? this.state.selectedStack
+            : response.data[0],
         });
       })
       .catch((error) => {
@@ -98,6 +101,7 @@ class App extends Component {
     const stack = this.state.stacks.find((s) => s._id === stackId);
     const otherCards = stack.cards.filter((c) => c.id !== cardId);
     stack.cards = otherCards;
+    debugger;
     updateStack(stackId, stack)
       .then(() => {
         this.fetchStacks();
@@ -139,7 +143,9 @@ class App extends Component {
           {/* sidebar */}
           <Sidebar
             stacks={this.state.stacks}
-            selected={this.state.selectedStack._id}
+            selected={
+              this.state.selectedStack ? this.state.selectedStack._id : null
+            }
             clickStack={this.clickStack}
             addStack={this.addStack}
             handleDeleteStack={this.handleDeleteStack}

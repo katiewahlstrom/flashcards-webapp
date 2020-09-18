@@ -8,7 +8,7 @@ class Content extends Component {
   };
 
   cardsList = () => {
-    return this.props.stack !== Object ? (
+    return this.props.stack !== null ? (
       this.props.stack.cards.map((card, i) => {
         return (
           <div key={card.id} className="row card-container">
@@ -106,7 +106,7 @@ class Content extends Component {
   };
 
   render() {
-    if (this.props.stack !== Object) {
+    if (this.props.stack !== null) {
       return (
         <div className="col-9 content pt-4 text-center">
           <div className="container">
