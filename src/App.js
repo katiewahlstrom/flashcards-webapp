@@ -19,12 +19,19 @@ class App extends Component {
   fetchStacks = () => {
     getStacks()
       .then((response) => {
-        debugger;
+        let stack;
+
+        if (this.state.selectedStack) {
+          stack = response.data.find((s) => {
+            return s._ud === this.state.selectedStack._id;
+          });
+        } else {
+          stack = response.data[0];
+        }
+
         this.setState({
           stacks: response.data,
-          selectedStack: this.state.selectedStack
-            ? this.state.selectedStack
-            : response.data[0],
+          selectedstate: stack,
         });
       })
       .catch((error) => {
