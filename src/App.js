@@ -23,15 +23,14 @@ class App extends Component {
 
         if (this.state.selectedStack) {
           stack = response.data.find((s) => {
-            return s._ud === this.state.selectedStack._id;
+            return s._id === this.state.selectedStack._id;
           });
         } else {
           stack = response.data[0];
         }
-
         this.setState({
           stacks: response.data,
-          selectedstate: stack,
+          selectedStack: stack,
         });
       })
       .catch((error) => {
